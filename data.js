@@ -101,10 +101,19 @@ window.SITE_DATA = {
       ]
     },
     {
+      "title": "player.exe",
+      "windowTitle": "Lain's Music & Video Player",
+      "img": "./resources/images/sound.png",
+      "top": "720px",
+      "left": "20px",
+      "type": "youtube_playlist",
+      "playlistId": "PLeqzln13ieO8"
+    },
+    {
       "title": "github_repos.exe",
       "windowTitle": "Public GitHub Repositories",
       "img": "./resources/images/exe.png",
-      "top": "620px",
+      "top": "820px",
       "left": "20px",
       "type": "github_api"
     }
