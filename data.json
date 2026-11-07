@@ -1,77 +1,112 @@
 {
-  "about_me": {
-    "title": "about_me.txt",
-    "windowTitle": "About",
-    "content": "<h2 class='underline'>About</h2><p>Hello and welcome to my little corner of the web! I'm a cybersecurity & cloud student with a passion for tinkering and exploring the inner workings of technology. Here, I'll be documenting my various topics I'm interested in and projects that are mostly related to cybersecurity stuff, networking or micro controllers. The site itself is a project even to HTML and CSS (because, why not?). My interests lie at the intersection of security and technology, I learn as I 'play' so I try myself at doing CTF challenges, or creating simple fun hacking tools. This site will be a reflection of my journey as I learn and experiment with new concepts and techniques to share with whoever might be interested. Thanks for stopping by, and I hope you find something interesting here!</p>"
-  },
-  "other_info": {
-    "title": "other_info.dat",
-    "windowTitle": "Other Information",
-    "content": "<h2 class='underline'>Other Information</h2><p>I will put something here later.</p>"
-  },
-  "completed_projects": [
+  "icons": [
     {
-      "title": "Pokemon game & Animations",
-      "url": "./articles/pokemon.html"
+      "title": "about_me.txt",
+      "windowTitle": "About",
+      "img": "./resources/images/about.png",
+      "top": "20px",
+      "left": "20px",
+      "type": "text",
+      "content": "<h2 class='underline'>About</h2><p>Hello and welcome to my little corner of the web! I'm a cybersecurity & cloud student with a passion for tinkering and exploring the inner workings of technology. Here, I'll be documenting my various topics I'm interested in and projects that are mostly related to cybersecurity stuff, networking or micro controllers. The site itself is a project even to HTML and CSS (because, why not?). My interests lie at the intersection of security and technology, I learn as I 'play' so I try myself at doing CTF challenges, or creating simple fun hacking tools. This site will be a reflection of my journey as I learn and experiment with new concepts and techniques to share with whoever might be interested. Thanks for stopping by, and I hope you find something interesting here!</p>"
     },
     {
-      "title": "VPC Custom Network AWS",
-      "url": "./articles/vpc.html"
+      "title": "other_info.dat",
+      "windowTitle": "Other Information",
+      "img": "./resources/images/info.png",
+      "top": "120px",
+      "left": "20px",
+      "type": "text",
+      "content": "<h2 class='underline'>Other Information</h2><p>I will put something here later.</p>"
     },
     {
-      "title": "Fake Access Point \"Evil Twin\"",
-      "url": "./articles/evil_twin.html"
+      "title": "completed.exe",
+      "windowTitle": "Completed Projects",
+      "img": "./resources/images/exe.png",
+      "top": "220px",
+      "left": "20px",
+      "type": "completed_list",
+      "items": [
+        { "title": "Pokemon game & Animations", "url": "./articles/pokemon.html" },
+        { "title": "VPC Custom Network AWS", "url": "./articles/vpc.html" },
+        { "title": "Fake Access Point \"Evil Twin\"", "url": "./articles/evil_twin.html" },
+        { "title": "CTF challenges on pwnable.kr", "url": "./articles/ctf.html" },
+        { "title": "Evilginx2 Attack Sim", "url": "./articles/evilginx.html" }
+      ]
     },
     {
-      "title": "CTF challenges on pwnable.kr",
-      "url": "./articles/ctf.html"
+      "title": "current.exe",
+      "windowTitle": "Current Projects",
+      "img": "./resources/images/exe.png",
+      "top": "320px",
+      "left": "20px",
+      "type": "current_list",
+      "items": [
+        {
+          "title": "Group project large network",
+          "windowTitle": "Group project large network",
+          "content": "<h2>Group project large network</h2><p>We are working on making a large infrastructure for a fictional company. Each person is assigned their own role, I will be mostly setting up all the services that we on proxmox using linux. I'm handling the file sharing, mail service, DHCP & DNS and intra net site. And we are working on it in a team of 4. We are using a mix of Linux and Windows servers.</p>"
+        },
+        {
+          "title": "Pico Fake USB",
+          "windowTitle": "Pico W Fake USB & remote control",
+          "content": "<h2>Soon</h2><p>Pico W Fake USB.</p>"
+        },
+        {
+          "title": "Homelab++",
+          "windowTitle": "Homelab environment++",
+          "content": "<h2>Homelab environment++</h2><p>I am working on getting my homelab configured...</p>"
+        }
+      ]
     },
     {
-      "title": "Evilginx2 Attack Sim",
-      "url": "./articles/evilginx.html"
-    }
-  ],
-  "current_projects": [
-    {
-      "title": "Group project large network",
-      "windowTitle": "Group project large network",
-      "content": "<h2>Group project large network</h2><p>We are working on making a large infrastructure for a fictional company. Each person is assigned their own role, I will be mostly setting up all the services that we on proxmox using linux. I'm handling the file sharing, mail service, DHCP & DNS and intra net site. And we are working on it in a team of 4. We are using a mix of Linux and Windows servers.</p>"
+      "title": "future.exe",
+      "windowTitle": "Future Projects",
+      "img": "./resources/images/exe.png",
+      "top": "420px",
+      "left": "20px",
+      "type": "future_list",
+      "items": [
+        {
+          "title": "Active directory automation & response",
+          "windowTitle": "Active directory automation & response",
+          "content": "<h2>Active directory automation & response</h2><p>Soon.</p>"
+        },
+        {
+          "title": "Zero Trust Network Implementation",
+          "windowTitle": "Zero Trust Network Implementation",
+          "content": "<h2>Zero Trust Network Implementation</h2><p>Once I setup a better home lab environment I can start Implementation of a zero trust network.</p>"
+        }
+      ]
     },
     {
-      "title": "Pico Fake USB",
-      "windowTitle": "Pico W Fake USB & remote control",
-      "content": "<h2>Soon</h2><p>Pico W Fake USB.</p>"
+      "title": "topics.txt",
+      "windowTitle": "Topics of Interest",
+      "img": "./resources/images/info.png",
+      "top": "520px",
+      "left": "20px",
+      "type": "topics_list",
+      "items": [
+        {
+          "title": "Reverse Engineering",
+          "content": "<h2>Reverse Engineering</h2><p>Soon. Learning some about using Ghidra.</p>"
+        },
+        {
+          "title": "Cryptography",
+          "content": "<h2>Cryptography</h2><p>Soon</p>"
+        },
+        {
+          "title": "Network Security",
+          "content": "<h2>Network Security</h2><p>Soon</p>"
+        }
+      ]
     },
     {
-      "title": "Homelab++",
-      "windowTitle": "Homelab environment++",
-      "content": "<h2>Homelab environment++</h2><p>I am working on getting my homelab configured...</p>"
-    }
-  ],
-  "future_projects": [
-    {
-      "title": "Active directory automation & response",
-      "windowTitle": "Active directory automation & response",
-      "content": "<h2>Active directory automation & response</h2><p>Soon.</p>"
-    },
-    {
-      "title": "Zero Trust Network Implementation",
-      "windowTitle": "Zero Trust Network Implementation",
-      "content": "<h2>Zero Trust Network Implementation</h2><p>Once I setup a better home lab environment I can start Implementation of a zero trust network.</p>"
-    }
-  ],
-  "topics": [
-    {
-      "title": "Reverse Engineering",
-      "content": "<h2>Reverse Engineering</h2><p>Soon. Learning some about using Ghidra.</p>"
-    },
-    {
-      "title": "Cryptography",
-      "content": "<h2>Cryptography</h2><p>Soon</p>"
-    },
-    {
-      "title": "Network Security",
-      "content": "<h2>Network Security</h2><p>Soon</p>"
+      "title": "github_repos.exe",
+      "windowTitle": "Public GitHub Repositories",
+      "img": "./resources/images/exe.png",
+      "top": "620px",
+      "left": "20px",
+      "type": "github_api"
     }
   ]
 }
