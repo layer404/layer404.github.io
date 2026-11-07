@@ -95,4 +95,51 @@ window.SITE_DATA = {
           "content": "<h2>Cryptography</h2><p>Soon</p>"
         },
         {
-          "title": "Network
+          "title": "Network Security",
+          "content": "<h2>Network Security</h2><p>Soon</p>"
+        }
+      ]
+    },
+    {
+      "title": "player.exe",
+      "windowTitle": "Lain's Music & Video Player",
+      "img": "./resources/images/sound.png",
+      "top": "720px",
+      "left": "20px",
+      "type": "youtube_playlist",
+      "playlistId": "PLeqzln13ieO8"
+    },
+    {
+      "title": "github_repos.exe",
+      "windowTitle": "Public GitHub Repositories",
+      "img": "./resources/images/exe.png",
+      "top": "820px",
+      "left": "20px",
+      "type": "github_api"
+    }
+  ],
+  "mediaArchive": [
+    {
+      "title": "background.gif",
+      "type": "image",
+      "src": "./resources/images/background.gif",
+      "thumb": "./resources/images/background.gif"
+    },
+    {
+      "title": "welcome.wav",
+      "type": "audio",
+      "src": "./resources/sounds/welcome.wav"
+    },
+    {
+      "title": "startup.wav",
+      "type": "audio",
+      "src": "./resources/sounds/startup.wav"
+    },
+    {
+      "title": "icon.png",
+      "type": "image",
+      "src": "./resources/images/icon.png",
+      "thumb": "./resources/images/icon.png"
+    }
+  ]
+};
