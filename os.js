@@ -1,6 +1,8 @@
 let youtubeIframe = null;
 let isMuted = false;
-document.addEventListener('DOMContentLoaded', function() {
+let siteData = null; // Store fetched JSON data globally for start menu actions
+
+document.addEventListener('DOMContentLoaded', async function() {
 
     // Get elements
     const bootSequence = document.getElementById('boot-sequence');
@@ -10,25 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeSound = document.getElementById('welcome-sound');
     const videoBackground = document.getElementById('video-background');
     
-    // Login screen elements
-    const loginTitle = document.getElementById('login-title');
-    const usernameLabel = document.getElementById('username-label');
-    const passwordLabel = document.getElementById('password-label');
-    const loginButton = document.getElementById('login-button');
-    
     // YouTube video ID
     const youtubeVideoId = 'fxjIthZY3YI';
 
-    const SKIP_BIOS_TEXT = false;   // true = go straight from the black screen to the login clip
+    const SKIP_BIOS_TEXT = false;
     const LOGIN = {
-        gif: './resources/images/logon.gif',   // the login clip (export it with "-loop -1" so it plays once and stays on its last frame)
-        duration: 12.4,                         // fallback clip length in seconds (used if the GIF's real length can't be read)
-        promptAt: 11,                           // seconds after the clip starts when typing unlocks
-        freezeBeforeEnd: 0.8,                   // freeze on the last frame this many seconds before the clip's end
+        gif: './resources/images/logon.gif',
+        duration: 12.4,
+        promptAt: 11,
+        freezeBeforeEnd: 0.8,
     };
-    // Region (in 1920x1080 clip pixels) of empty background cloned over the clip's own square, so ours can follow the text
     const PATCH = { sx: 770, sy: 482, w: 100, h: 76 };
-    const preloadGif = new Image();   // start downloading the clip while the boot text runs
+    const preloadGif = new Image();
     preloadGif.src = LOGIN.gif;
     
     // Boot sequence text
@@ -57,60 +52,21 @@ document.addEventListener('DOMContentLoaded', function() {
         ""
     ];
     
-    // Login screen text content
-    const loginTexts = {
-        title: ".0phanim//OS Enterprise",
-        usernameLabel: "Username:",
-        passwordLabel: "Password:",
-        loginButton: "Login (no password required)"
-    };
-    
-    // Calculate time per line to make the whole sequence last 3 seconds
-    const totalBootTime = 3000; // 3 seconds in milliseconds
+    const totalBootTime = 3000;
     const timePerLine = totalBootTime / bootLines.length;
     
-    // Function to display boot sequence lines one by one
     function displayBootSequence(lines, index = 0) {
         if (index >= lines.length) {
-            // Boot sequence complete, show login screen
             bootSequence.classList.add('hidden');
             startLogin();
             return;
         }
-        
-        const currentLine = lines[index];
-        bootText.innerHTML += currentLine + "\n";
-        
-        // Schedule next line
-        setTimeout(() => {
-            displayBootSequence(lines, index + 1);
-        }, timePerLine);
+        bootText.innerHTML += lines[index] + "\n";
+        setTimeout(() => displayBootSequence(lines, index + 1), timePerLine);
     }
     
-    // Function to add text with typing effect
-    function typeText(element, text, callback, speed = 50) {
-        let i = 0;
-        element.textContent = "";
-        element.classList.add('fade-in');
-        
-        function addChar() {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                setTimeout(addChar, speed);
-            } else if (callback) {
-                callback();
-            }
-        }
-        
-        addChar();
-    }
-    
-    // Start the boot sequence
     displayBootSequence(SKIP_BIOS_TEXT ? [] : bootLines);
     
-    // ---------- Navi-style login ----------
-    // Real length of a GIF in seconds, read from its frame delays (browsers treat delays of 0-1 as 10 hundredths)
     async function gifDuration(url) {
         try {
             const buf = new Uint8Array(await (await fetch(url)).arrayBuffer());
@@ -160,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
             input.focus();
         }
 
-        // Freeze on the last frame whatever the GIF's loop setting is: copy the current frame to a canvas and hide the GIF
         function freeze() {
             if (frozen || !img.naturalWidth) return;
             frozen = true;
@@ -171,14 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
             img.style.visibility = 'hidden';
         }
 
-        // Assigning src restarts the GIF from frame 0; the audio is started a moment before this
         function startGif() {
-            if (startedAt !== null) return;   // only ever start once
+            if (startedAt !== null) return;
             img.src = LOGIN.gif;
             startedAt = performance.now();
         }
 
-        // Audio + GIF start together. If the browser blocks sound, wait for a click instead of starting silently
         function begin() {
             if (!startupSound) return startGif();
             startupSound.loop = false;
@@ -186,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
             startupSound.play().then(startGif).catch(err => {
                 if (!err || err.name !== 'NotAllowedError') return startGif();
                 gate.classList.remove('hidden');
-                const go = () => {   // remove both listeners, or the next key you type would restart the sound
+                const go = () => {
                     gate.removeEventListener('click', go);
                     document.removeEventListener('keydown', go);
                     gate.classList.add('hidden');
@@ -197,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // The clip keeps playing the whole time; we only paint the patch over it
         function frame() {
             if (loginScreen.classList.contains('hidden')) return;
             const elapsed = startedAt === null ? 0 : (performance.now() - startedAt) / 1000;
@@ -218,22 +170,29 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter') { e.preventDefault(); enterDesktop(); }
         });
         loginScreen.addEventListener('click', () => { if (active) input.focus(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') activate(); });   // Esc = unlock typing right away
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') activate(); });
 
-        img.addEventListener('error', () => activate(false));   // clip missing -> prompt only
-        // Wait (max 10 s) until the GIF is downloaded and decoded so audio and picture start in sync
+        img.addEventListener('error', () => activate(false));
         gifDuration(LOGIN.gif).then(d => { if (d > 1 && d < 60) freezeAfter = d - LOGIN.freezeBeforeEnd; });
         Promise.race([preloadGif.decode().catch(() => {}), new Promise(r => setTimeout(r, 10000))]).then(begin);
     }
 
-    function enterDesktop() {
+    async function enterDesktop() {
         if (startupSound) startupSound.pause();
         loginScreen.classList.add('hidden');
         document.getElementById('desktop').classList.remove('hidden');
         initializeTaskbar();
-        document.getElementById('video-background').classList.add('visible');
+        videoBackground.classList.add('visible');
 
-        // Welcome sound first, then the YouTube music
+        // Fetch data.json and build desktop icons dynamically
+        try {
+            const res = await fetch('./data.json');
+            siteData = await res.json();
+            buildDesktopIcons(siteData);
+        } catch (err) {
+            console.error("Failed to load data.json", err);
+        }
+
         if (welcomeSound) {
             welcomeSound.currentTime = 0;
             welcomeSound.onended = () => playYouTubeAudio(youtubeVideoId);
@@ -244,36 +203,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializeTaskbar() {
-        // Reveal the taskbar now that we're logged in
         document.getElementById('taskbar').classList.remove('hidden');
-
-        // Update clock 1 minute after initialization
         updateClock();
         setInterval(updateClock, 60000);
         
-        // Set up start button functionality
         const startButton = document.getElementById('start-button');
-        if (startButton) {
-            startButton.addEventListener('click', toggleStartMenu);
-        }
+        if (startButton) startButton.addEventListener('click', toggleStartMenu);
         
-        // Set up audio control
         const audioControl = document.getElementById('audio-control');
-  if (audioControl) {
-    audioControl.addEventListener('click', toggleMute);
-  }
+        if (audioControl) audioControl.addEventListener('click', toggleMute);
         
-        // Close start menu when clicking elsewhere
         document.addEventListener('click', function(e) {
             const startMenu = document.getElementById('start-menu');
             const startButton = document.getElementById('start-button');
-            
             if (!startMenu.contains(e.target) && !startButton.contains(e.target) && !startMenu.classList.contains('hidden')) {
                 startMenu.classList.add('hidden');
             }
         });
-        
-        console.log("Taskbar initialized");
     }
 
     function updateClock() {
@@ -283,84 +229,123 @@ document.addEventListener('DOMContentLoaded', function() {
             let hours = now.getHours();
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours % 12 || 12;
             clockElement.textContent = `${hours}:${minutes} ${ampm}`;
         }
     }
 
     function toggleStartMenu() {
-        const startMenu = document.getElementById('start-menu');
-        startMenu.classList.toggle('hidden');
+        document.getElementById('start-menu').classList.toggle('hidden');
     }
 
     function toggleMute() {
-        // 1) Flip our state
         isMuted = !isMuted;
         ['startup-sound', 'welcome-sound'].forEach(id => { const a = document.getElementById(id); if (a) a.muted = isMuted; });
-      
-        // 2) Swap the icon right away
         const soundIcon = document.getElementById('sound-icon');
-        if (!soundIcon) return; // bail if we can't find the <img>
-      
+        if (!soundIcon) return;
         if (isMuted) {
-          soundIcon.src = './resources/images/mute.png';
-          soundIcon.alt = 'Muted';
+            soundIcon.src = './resources/images/mute.png';
+            soundIcon.alt = 'Muted';
         } else {
-          soundIcon.src = './resources/images/sound.png';
-          soundIcon.alt = 'Sound On';
+            soundIcon.src = './resources/images/sound.png';
+            soundIcon.alt = 'Sound On';
         }
-      
-        // 3) If YouTube iframe exists, send it a message
         if (youtubeIframe && youtubeIframe.contentWindow) {
-          const cmd = isMuted ? 'mute' : 'unMute';
-          youtubeIframe.contentWindow.postMessage(
-            JSON.stringify({ event: 'command', func: cmd, args: [] }),
-            '*'
-          );
+            const cmd = isMuted ? 'mute' : 'unMute';
+            youtubeIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: cmd, args: [] }), '*');
         }
-      } 
+    } 
     
-    // Function to play audio from YouTube video
     function playYouTubeAudio(videoId) {
-    // Create a hidden YouTube iframe with API enabled
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&showinfo=0&autohide=1&enablejsapi=1&origin=${window.location.origin}`;
-    iframe.allow = "autoplay";
-    document.body.appendChild(iframe);
-    
-    // Store reference to the iframe for muting
-    youtubeIframe = iframe;
-    iframe.addEventListener('load', () => { if (isMuted) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: [] }), '*'); });
-    
-    console.log("YouTube audio should be playing now");
-}
-    
-    // Make desktop icons draggable
-    const desktopIcons = document.querySelectorAll('.desktop-icon');
-    desktopIcons.forEach(makeIconDraggable);
-    
-    // Handle double-click on desktop icons to open windows
-    desktopIcons.forEach(icon => {
-        icon.addEventListener('dblclick', function() {
-            const title = this.getAttribute('data-title');
-            const content = this.getAttribute('data-content');
-            
-            // Create a new window
-            createWindow(title, content);
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&showinfo=0&autohide=1&enablejsapi=1&origin=${window.location.origin}`;
+        iframe.allow = "autoplay";
+        document.body.appendChild(iframe);
+        youtubeIframe = iframe;
+        iframe.addEventListener('load', () => { if (isMuted) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute', args: [] }), '*'); });
+    }
+
+    // ---------- Dynamic Desktop Icons Builder ----------
+    function buildDesktopIcons(data) {
+        const container = document.getElementById('desktop-icons-container');
+        container.innerHTML = '';
+
+        data.icons.forEach(iconData => {
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'desktop-icon';
+            iconDiv.style.top = iconData.top;
+            iconDiv.style.left = iconData.left;
+            iconDiv.dataset.title = iconData.title;
+
+            iconDiv.innerHTML = `
+                <img src="${iconData.img}" alt="${iconData.title}">
+                <span>${iconData.title}</span>
+            `;
+
+            makeIconDraggable(iconDiv);
+
+            // Double click handler based on icon type
+            iconDiv.addEventListener('dblclick', () => {
+                handleIconOpen(iconData);
+            });
+
+            container.appendChild(iconDiv);
         });
-    });
-    
-    // Function to make desktop icons draggable
+    }
+
+    function handleIconOpen(iconData) {
+        if (iconData.type === 'text') {
+            createWindow(iconData.windowTitle, iconData.content);
+        } 
+        else if (iconData.type === 'completed_list') {
+            let html = `<h2 class='underline'>${iconData.windowTitle}</h2><p>Here are my completed projects:</p><ul>`;
+            iconData.items.forEach(p => {
+                html += `<li><span class='window-link' data-window-title='${p.title}' data-url='${p.url}'>${p.title}</span></li>`;
+            });
+            html += "</ul>";
+            createWindow(iconData.windowTitle, html);
+        }
+        else if (iconData.type === 'current_list' || iconData.type === 'future_list' || iconData.type === 'topics_list') {
+            let html = `<h2 class='underline'>${iconData.windowTitle}</h2><ul>`;
+            iconData.items.forEach(item => {
+                html += `<li><span class='window-link' data-window-title='${item.windowTitle || item.title}' data-window-content='${item.content}'>${item.title}</span></li>`;
+            });
+            html += "</ul>";
+            createWindow(iconData.windowTitle, html);
+        }
+        else if (iconData.type === 'github_api') {
+            // Open window with immediate loading state and fetch live repos
+            const win = createWindow(iconData.windowTitle, "<p>Connecting to GitHub API...</p>");
+            const body = win.querySelector('.window-content div') || win.querySelector('.window-content');
+            
+            fetch("https://api.github.com/users/layer404/repos?sort=updated")
+                .then(res => res.json())
+                .then(repos => {
+                    let html = `<h2 class='underline'>Public GitHub Repositories</h2><p>Fetched live from GitHub:</p><ul style='list-style-type: none; padding: 0;'>`;
+                    repos.forEach(repo => {
+                        html += `
+                            <li style="margin-bottom: 12px; border-bottom: 1px dashed #808080; padding-bottom: 8px;">
+                                <strong><a href="${repo.html_url}" target="_blank" style="color: blue; text-decoration: underline;">${repo.name}</a></strong>
+                                <p style="margin: 4px 0; font-size: 0.9em;">${repo.description || "No description provided."}</p>
+                                <span style="font-size: 0.8em; color: #555;">⭐ ${repo.stargazers_count} | 🔀 ${repo.forks_count} | Language: ${repo.language || 'N/A'}</span>
+                            </li>`;
+                    });
+                    html += "</ul>";
+                    body.innerHTML = html;
+                })
+                .catch(() => {
+                    body.innerHTML = "<p>Error fetching repositories from GitHub API.</p>";
+                });
+        }
+    }
+
     function makeIconDraggable(element) {
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        
         element.onmousedown = dragMouseDown;
         
         function dragMouseDown(e) {
             e.preventDefault();
-            // Get the mouse cursor position at startup
             pos3 = e.clientX;
             pos4 = e.clientY;
             document.onmouseup = closeDragElement;
@@ -369,23 +354,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function elementDrag(e) {
             e.preventDefault();
-            // Calculate the new cursor position
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            // Set the element's new position
             element.style.top = (element.offsetTop - pos2) + "px";
             element.style.left = (element.offsetLeft - pos1) + "px";
         }
         
         function closeDragElement() {
-            // Stop moving when mouse button is released
             document.onmouseup = null;
             document.onmousemove = null;
         }
     }
-    
 
     // ---------- Window manager ----------
     let zTop = 10;
@@ -415,7 +396,6 @@ document.addEventListener('DOMContentLoaded', function() {
         item.textContent = title;
         item.title = title;
         item.dataset.windowId = win.id;
-        // Minimized or in the background -> bring to front; already focused -> minimize
         item.addEventListener('click', () => {
             if (win.style.display === 'none' || !win.classList.contains('focused')) focusWindow(win);
             else minimizeWindow(win);
@@ -429,7 +409,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (item) item.remove();
     }
 
-    // One function builds every window (static HTML, a fetched page, or an optional image)
     function openWindow(title, html, url = null, imageUrl = null) {
         const win = document.createElement('div');
         win.className = 'window';
@@ -465,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
                 .then(text => { body.innerHTML = text; })
                 .catch(() => {
-                    body.innerHTML = '<p>Could not load this page.</p><p>If you opened the site straight from disk, serve it with a local web server instead, e.g. <code>python3 -m http.server</code>.</p>';
+                    body.innerHTML = '<p>Could not load this page.</p>';
                 });
         } else {
             body.innerHTML = html;
@@ -488,11 +467,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return win;
     }
 
-    // Kept as thin wrappers so the rest of the code (and index.html) keeps working
     function createWindow(title, content, imageUrl = null) { return openWindow(title, content, null, imageUrl); }
     function createWindowFromUrl(title, url, imageUrl = null) { return openWindow(title, '', url, imageUrl); }
 
-    // Drag by the title bar (mouse + touch), kept inside the desktop area
     function makeWindowDraggable(win) {
         const header = win.querySelector('.window-header');
         win.addEventListener('pointerdown', () => focusWindow(win));
@@ -517,10 +494,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ---------- Start menu actions ----------
     function openDesktopFile(name) {
+        if (!siteData) return;
         const wanted = name.trim().toLowerCase();
-        const icon = [...document.querySelectorAll('.desktop-icon')].find(i => i.dataset.title.toLowerCase() === wanted);
-        if (icon) openWindow(icon.dataset.title, icon.dataset.content);
-        else alert(`Cannot find '${name}'. Check the spelling and try again.`);
+        const found = siteData.icons.find(i => i.title.toLowerCase() === wanted);
+        if (found) {
+            handleIconOpen(found);
+        } else {
+            alert(`Cannot find '${name}'. Check the spelling and try again.`);
+        }
     }
 
     function runStartAction(action) {
@@ -554,8 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    
-    // Add event delegation for window links
+    // Window links delegation
     document.getElementById('windows-container').addEventListener('click', function(e) {
         let target = e.target;
         while (target && target !== this) {
@@ -565,19 +545,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const content = target.getAttribute('data-window-content');
                 const imageUrl = target.getAttribute('data-window-image');
     
-                if (url) {
-                    createWindowFromUrl(title, url, imageUrl);
-                } else if (content) {
-                    createWindow(title, content, imageUrl);
-                }
-    
+                if (url) createWindowFromUrl(title, url, imageUrl);
+                else if (content) createWindow(title, content, imageUrl);
                 break;
             }
             target = target.parentNode;
         }
     });
     
-    // Add styles for window links
     const style = document.createElement('style');
     style.textContent = `
         .window-link {
