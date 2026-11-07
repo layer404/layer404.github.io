@@ -1,0 +1,152 @@
+body {
+    margin: 0; padding-top: 1px;
+    font-family: Dyslexie, OpenDyslexic, 'Atkinson Hyperlegible', Verdana, Ubuntu, roboto, noto, Arial, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, -apple-system, BlinkMacSystemFont, Sans-Serif;
+    font-size: 1em;
+    line-height: 1.5em;
+    color: var(--text);
+    /* background gradient and fallback */
+    background-color: var(--background-fallback);
+    background: var(--background-gradient);
+}
+
+/* This is the background texture, which has to be separate from the
+background gradient for both to show. We use a pseudo-element to avoid
+unnecessary div use- clean HTML is good! */
+body::before {
+    content: "";
+    position: absolute;
+    background-image: var(--pattern);
+    pointer-events: none;
+    z-index: 2; /* handles overlay with gradient */
+    width: 100vw;
+}
+
+/* Ensures the background covers the screen entirely */
+body::before, body {min-height: calc(100vh - 1px);}
+
+main {
+    position: relative; /* so z-index works to overlay over bg */
+    max-width: var(--box-width);
+    margin: auto auto;
+    margin-top: 1em;
+    padding: 1em;
+    padding-bottom: 0;
+    background: var(--main-box);
+    z-index: 3;
+}
+
+/* backgrounds */
+.box {background: var(--overlay-color);}
+.bg-pattern {background-image: var(--pattern);}
+
+/* header tweaks */
+h1, h2 {
+    font-family: Dyslexie, OpenDyslexic, "HeaderFont", sans-serif;
+    line-height: 1em;
+}
+
+h1 {font-size: 2.5em;}
+
+/* boxes should look nice */
+.box, main {
+    padding: 1em;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+}
+/* exceptions for non-main boxes */
+.box:not(main.box) {
+    padding: 0 1em; 
+    margin-bottom: 0.5em;
+}
+
+/* Flexbox container setup. */
+.flex {
+    display: flex; flex-wrap: wrap;
+    padding-bottom: 0; margin-bottom: 1em;
+}
+
+/* Default to each element taking up half the space */
+.flex :is(h1, .headline) {flex-basis: 50%;}
+
+/* Allow h1 to grow so the spacing looks right; aim to be twice
+as large as the text next to it. */
+h1 {margin: 0.2em; flex-grow: 2;}
+
+/* Spacing of box headers and text beneath them */
+h2 {margin-bottom: 0;}
+h2 ~ p {margin-top: 0.5em;} /* Paragraphs directly after h2 elements */
+
+/* Give class="right" to any text you'd like to right-align */
+.right {text-align: right;}
+
+/* Ditto for class="underline" and a bottom border */
+.underline {border-bottom: 1px solid var(--accent);}
+
+/* Make the horizontal rules prettier */
+hr {border: 2px solid var(--accent);}
+
+/* The custom socials list */
+.flexlist {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; 
+    row-gap: 0.5em; /* space things out a bit if it wraps */
+    column-gap: 0.25em; /* also space out side-by-side items */
+    padding-left: 0;
+}
+.flexlist li {
+    flex-basis: calc(20% - 1em); /* 1em is the total horizontal padding */
+    flex-grow: 1; /* makes buttons fill space if wrapped */
+    border: 1px solid var(--accent); 
+    margin-left: 0; /* lists have default left margins */
+    padding: 0.5em 0.5em;
+    text-align: center;
+    border-radius: 5px; /* round corners go bbrrrr */
+}
+/* Hide the social list bullets... accessibly! */
+.flexlist li::marker {color: transparent;}
+/* Hover effect on list items */
+.flexlist li:hover {backdrop-filter: brightness(110%);}
+
+/* Opening animation when first loading the window
+REMOVE THIS CHUNK IF PRIORITIZING MOTION SENSITIVITY ACCESSIBILITY */
+@media only screen and not (prefers-reduced-motion: reduce) {
+    main {
+        -webkit-animation: opener 1.5s ease;
+        animation: opener 1.5s ease;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+        -webkit-animation-iteration-count: 1;
+        animation-iteration-count: 1;
+        -webkit-animation-direction: forwards;
+        animation-direction: forwards;
+        -webkit-animation-delay: 0.1s;
+        animation-delay: 0.1s;
+        /* Default position before animation */
+        transform: scaleY(0.001) scaleX(1.3);
+    }
+    /* used on main */
+    @-webkit-keyframes opener {
+    from {transform: scaleY(0.001) scaleX(1.3);}
+    to {transform: scaleY(1) scaleX(1);}
+    }
+/* END OF ANIMATION CODE */
+
+/* The custom title font. Replace if you'd like. */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'HeaderFont';
+    font-style: normal;
+    font-weight: 400;
+    src: local("The Bold Font"),
+    url('./resources/fonts/theboldfont.ttf') format('truetype');
+  }
+
+  /* Remove box rounding to be nice to mobile */
+  @media only screen and (max-width: 60ch) {
+    main {border-radius: 0;}
+    }
+}
+
+/* Link colors */
+a:link {color: var(--unvisited);}
+a:visited {color: var(--visited);}

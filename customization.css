@@ -1,0 +1,591 @@
+:root {
+    /* Background of the whole page */
+    --background-fallback: #000000;
+    --background-gradient: linear-gradient(180deg, #0c02cc 50%, #02c2cc 100%);
+    /* We'll no longer use this pattern variable for the main background */
+    --pattern: url("./resources/images/background.gif");
+    /* Background of the floating box with words in it */
+    --main-box: rgba(254, 243, 243, 0.8);
+    /* Used to lighten/darken boxes */
+    --overlay-color: rgba(255,255,255,0.3);
+    /* Text color */
+    --text: black;
+    /* Links */
+    --unvisited: #00378a;
+    --visited: #530068;
+    /* Accent color: borders, mostly */
+    --accent: #4b0080;
+    /* The width of the box */
+    --box-width: 65ch;
+    /* OS theme colors */
+    --window-header: #4ab2eb;
+    --window-border: #02c2cc;
+    --icon-hover: rgba(255, 255, 255, 0.2);
+}
+
+/* Adjustments for dark theme */
+@media only screen and (prefers-color-scheme: dark) {
+    :root {
+        /* Background of the whole page */
+        --background-fallback: #d644a5;
+        --background-gradient: linear-gradient(180deg, #023eca 0%, #02c2cc 100%);
+        /* We'll no longer use this pattern variable for the main background */
+        --pattern: url("./resources/images/background.gif");
+        /* Background of the floating box with words in it */
+        --main-box: rgb(56, 57, 56);
+        /* Used to lighten/darken boxes */
+        --overlay-color: rgba(0,0,0,0.3);
+        /* Text color */
+        --text: rgb(241, 246, 242);
+        /* Links */
+        --unvisited: #dff3e1;
+        --visited: #fae5ff;
+        /* Accent color: borders, mostly */
+        --accent: #7ab6c5;
+        /* OS theme colors */
+        --window-header: #4ab2eb;
+        --window-border: #02c2cc;
+        --icon-hover: rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Replace the body::before with a video background */
+body::before {
+    content: none; /* Remove the pseudo-element background */
+}
+
+/* Update the video-background selector to work with an img element */
+#video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Below the gradient but above the background color */
+    pointer-events: none; /* Allow clicks to pass through */
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#video-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#video-background.visible {
+    opacity: 1;
+}
+/* Keep the gradient overlay */
+body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-gradient);
+    z-index: 2; /* Above the video */
+    pointer-events: none;
+    opacity: 0.7; /* Adjust this to control how much of the gradient shows */
+}
+
+/* Remove the main content box */
+main {
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
+}
+
+/* Ensure desktop takes up full space */
+#desktop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 30px; /* Height of taskbar */
+}
+
+/* Ensure windows container takes up full space */
+#windows-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Boot Sequence Styles */
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace;
+    z-index: 9999;
+    overflow: auto;
+}
+
+.boot-content {
+    padding: 20px;
+    white-space: pre-wrap;
+}
+
+#boot-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+/* Text fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+    opacity: 1; /* Ensure full opacity after animation */
+}
+
+/* Ensure login screen remains centered */
+#login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+/* Ensure video is hidden until after login */
+#video-background {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#video-background.visible {
+    opacity: 1;
+}
+
+.login-window {
+    background: var(--main-box);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.login-window h2 {
+    margin-top: 0;
+    text-align: center;
+    color: var(--text);
+    font-family: 'HeaderFont', sans-serif;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--accent);
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+    border-radius: 4px;
+}
+
+#login-button {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#login-button:hover {
+    background: var(--visited);
+}
+
+/* Hide elements */
+.hidden {
+    display: none !important;
+}
+
+/* Desktop Icons - now freely positioned */
+.desktop-icon {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 5;
+}
+
+.desktop-icon:hover {
+    background: var(--icon-hover);
+}
+
+.desktop-icon img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 5px;
+}
+
+.desktop-icon span {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text);
+    word-break: break-word;
+}
+
+/* Windows - updated size and style to match Windows XP "My Documents" */
+.window {
+    position: absolute;
+    background: var(--main-box);
+    border: 2px solid var(--window-border);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    resize: both;
+    overflow: auto;
+    min-width: 500px;
+    min-height: 350px;
+    z-index: 10;
+    width: 700px;
+    height: 500px;
+}
+
+.window-header {
+    background: var(--window-header);
+    color: white;
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    border-radius: 6px 6px 0 0;
+}
+
+.window-title {
+    font-weight: bold;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.window-content {
+    padding: 15px;
+    height: calc(100% - 40px);
+    overflow: auto;
+}
+
+/* Add styles for window content images */
+.window-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
+/* Add a toolbar below the header for Windows XP style */
+.window-toolbar {
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+}
+
+.window-toolbar button {
+    background: none;
+    border: none;
+    padding: 3px 8px;
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.window-toolbar button:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Style for window links */
+.window-link {
+    color: var(--unvisited);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.window-link:hover {
+    color: var(--visited);
+}
+
+/* Link colors */
+a:link {color: var(--unvisited);}
+a:visited {color: var(--visited);}
+/* Windows 98 Taskbar Styles */
+#taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    display: flex;
+    z-index: 1000;
+}
+
+#start-button {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    height: 24px;
+    background: #c0c0c0;
+    border-right: 1px solid #808080;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #808080;
+    cursor: pointer;
+    margin: 2px;
+}
+
+#start-button:active {
+    border-right: 1px solid #ffffff;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+}
+
+#start-button img {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+#open-windows {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+}
+
+#system-tray {
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    border-left: 1px solid #808080;
+}
+
+#audio-control {
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+#audio-control img {
+    width: 16px;
+    height: 16px;
+}
+
+#clock {
+    margin: 0 5px;
+    font-family: 'MS Sans Serif', Arial, sans-serif;
+    font-size: 11px;
+    padding: 2px 5px;
+    background: #c0c0c0;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #ffffff;
+    border-top: 1px solid #ffffff;
+}
+
+/* Start Menu Styles */
+#start-menu {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 200px;
+    background: #c0c0c0;
+    border-right: 1px solid #000000;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid #000000;
+    z-index: 1001;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.start-header {
+    height: 30px;
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-family: 'MS Sans Serif', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.start-items {
+    padding: 5px 0;
+}
+
+.start-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.start-item:hover {
+    background: #000080;
+    color: white;
+}
+
+.start-item img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.start-divider {
+    height: 1px;
+    background: #808080;
+    margin: 5px 0;
+    border-bottom: 1px solid #ffffff;
+}
+
+/* ===== Layout fixes ===== */
+html, body { height: 100%; overflow: hidden; }
+
+/* Desktop stops exactly where the taskbar starts; border-box so padding can't push it off-screen */
+#desktop {
+    position: fixed;
+    inset: 0 0 30px 0;
+    width: auto; height: auto; max-width: none;
+    box-sizing: border-box;
+    padding: 0;
+    border-radius: 0;
+    overflow: hidden;
+    transform: none; animation: none;
+    z-index: 3;
+}
+#windows-container { pointer-events: none; }
+#windows-container .window { pointer-events: auto; }
+
+/* ===== Taskbar / start menu (always readable, even in dark mode) ===== */
+#taskbar, #start-menu { color: #000; font-family: 'MS Sans Serif', Arial, sans-serif; font-size: 12px; box-sizing: border-box; }
+#taskbar { padding-bottom: env(safe-area-inset-bottom, 0px); height: calc(30px + env(safe-area-inset-bottom, 0px)); }
+#start-menu { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); }
+#open-windows { gap: 3px; min-width: 0; overflow: hidden; }
+.taskbar-item {
+    flex: 0 1 160px; min-width: 40px; height: 22px; box-sizing: border-box;
+    padding: 0 8px; line-height: 20px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    background: #c0c0c0; cursor: pointer; user-select: none;
+    border-top: 1px solid #fff; border-left: 1px solid #fff;
+    border-right: 1px solid #808080; border-bottom: 1px solid #808080;
+}
+.taskbar-item.active {
+    font-weight: bold; background: #dcdcdc;
+    border-top: 1px solid #808080; border-left: 1px solid #808080;
+    border-right: 1px solid #fff; border-bottom: 1px solid #fff;
+}
+#audio-control img { cursor: pointer; }
+
+/* ===== Windows ===== */
+.window {
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    width: min(700px, 96vw); height: min(500px, 85%);
+    min-width: min(500px, 96vw); min-height: 250px;
+}
+.window-header, .window-toolbar { flex: none; touch-action: none; user-select: none; }
+.window:not(.focused) .window-header { filter: grayscale(0.6) brightness(0.9); }
+.window-content { flex: 1; min-height: 0; height: auto; overflow: auto; }
+.window-controls { display: flex; gap: 4px; }
+.window-controls button {
+    width: 24px; height: 22px; padding: 0; line-height: 1;
+    background: rgba(255,255,255,0.15); color: #fff; font-size: 16px;
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 2px; cursor: pointer;
+}
+.window-controls button:hover { background: rgba(255,255,255,0.35); }
+.window.maximized {
+    top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
+    border-radius: 0; resize: none;
+}
+@media (max-width: 700px) { .window:not(.maximized) { left: 2vw !important; } }
+
+/* Shut down screen */
+#shutdown-screen { cursor: pointer; display: flex; justify-content: center; align-items: center; text-align: center; }
+#shutdown-screen.hidden { display: none !important; }
+
+
+/* ===== Navi-style login (positions are % of the 1920x1080 clip, sizes use cqw = % of stage width) ===== */
+#login-screen { background: #000; }
+#login-stage { position: relative; container-type: inline-size; width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; }
+#login-gif { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; }
+#login-freeze { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
+/* copy of empty background that hides the clip's own blinking square once you can type */
+#login-patch { position: absolute; left: 34.06%; top: 44.63%; width: 5.21%; height: 7.04%; visibility: hidden; }
+#login-typed {
+    position: absolute; left: 34.6%; top: 45.4%; height: 6.2%;
+    display: flex; align-items: center; white-space: pre;
+    font: bold 2.4cqw 'Times New Roman', Times, serif; color: #46485d;
+}
+#login-typed.hidden { display: none !important; }
+#login-cursor {
+    flex: none; width: 4.17cqw; height: 3.49cqw; margin-left: 0.2cqw;
+    background: #6478ca; box-shadow: 0.4cqw 0.4cqw 0 #485691;
+    animation: login-blink 1s steps(1) infinite;
+}
+@keyframes login-blink { 50% { opacity: 0; } }
+/* the real input is invisible; it just receives the typing (and the phone keyboard) */
+#username { position: fixed; left: 0; top: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; font-size: 16px; }
+#login-gate { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: #bff; font-family: 'Courier New', monospace; letter-spacing: 0.25em; cursor: pointer; }
+#login-gate.hidden { display: none !important; }
