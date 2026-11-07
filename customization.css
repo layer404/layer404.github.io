@@ -2,22 +2,14 @@
     /* Background of the whole page */
     --background-fallback: #000000;
     --background-gradient: linear-gradient(180deg, #0c02cc 50%, #02c2cc 100%);
-    /* We'll no longer use this pattern variable for the main background */
     --pattern: url("./resources/images/background.gif");
-    /* Background of the floating box with words in it */
     --main-box: rgba(254, 243, 243, 0.8);
-    /* Used to lighten/darken boxes */
     --overlay-color: rgba(255,255,255,0.3);
-    /* Text color */
     --text: black;
-    /* Links */
     --unvisited: #00378a;
     --visited: #530068;
-    /* Accent color: borders, mostly */
     --accent: #4b0080;
-    /* The width of the box */
     --box-width: 65ch;
-    /* OS theme colors */
     --window-header: #4ab2eb;
     --window-border: #02c2cc;
     --icon-hover: rgba(255, 255, 255, 0.2);
@@ -26,23 +18,15 @@
 /* Adjustments for dark theme */
 @media only screen and (prefers-color-scheme: dark) {
     :root {
-        /* Background of the whole page */
         --background-fallback: #d644a5;
         --background-gradient: linear-gradient(180deg, #023eca 0%, #02c2cc 100%);
-        /* We'll no longer use this pattern variable for the main background */
         --pattern: url("./resources/images/background.gif");
-        /* Background of the floating box with words in it */
         --main-box: rgb(56, 57, 56);
-        /* Used to lighten/darken boxes */
         --overlay-color: rgba(0,0,0,0.3);
-        /* Text color */
         --text: rgb(241, 246, 242);
-        /* Links */
         --unvisited: #dff3e1;
         --visited: #fae5ff;
-        /* Accent color: borders, mostly */
         --accent: #7ab6c5;
-        /* OS theme colors */
         --window-header: #4ab2eb;
         --window-border: #02c2cc;
         --icon-hover: rgba(0, 0, 0, 0.3);
@@ -51,18 +35,17 @@
 
 /* Replace the body::before with a video background */
 body::before {
-    content: none; /* Remove the pseudo-element background */
+    content: none;
 }
 
-/* Update the video-background selector to work with an img element */
 #video-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1; /* Below the gradient but above the background color */
-    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 1;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 1s ease;
 }
@@ -76,7 +59,7 @@ body::before {
 #video-background.visible {
     opacity: 1;
 }
-/* Keep the gradient overlay */
+
 body {
     position: relative;
     margin: 0;
@@ -93,12 +76,11 @@ body::after {
     width: 100%;
     height: 100%;
     background: var(--background-gradient);
-    z-index: 2; /* Above the video */
+    z-index: 2;
     pointer-events: none;
-    opacity: 0.7; /* Adjust this to control how much of the gradient shows */
+    opacity: 0.7;
 }
 
-/* Remove the main content box */
 main {
     background: none;
     border: none;
@@ -109,7 +91,6 @@ main {
     max-width: none;
 }
 
-/* Ensure desktop takes up full space */
 #desktop {
     position: absolute;
     top: 0;
@@ -121,10 +102,9 @@ main {
     box-shadow: none;
     margin: 0;
     padding: 0;
-    padding-bottom: 30px; /* Height of taskbar */
+    padding-bottom: 30px;
 }
 
-/* Ensure windows container takes up full space */
 #windows-container {
     position: absolute;
     top: 0;
@@ -133,7 +113,7 @@ main {
     height: 100%;
 }
 
-/* Boot Sequence Styles */
+/* Boot Sequence Styles - Kept Monospace */
 .fullscreen-overlay {
     position: fixed;
     top: 0;
@@ -158,7 +138,6 @@ main {
     line-height: 1.3;
 }
 
-/* Text fade-in animation */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -166,10 +145,9 @@ main {
 
 .fade-in {
     animation: fadeIn 0.5s forwards;
-    opacity: 1; /* Ensure full opacity after animation */
+    opacity: 1;
 }
 
-/* Ensure login screen remains centered */
 #login-screen {
     position: fixed;
     top: 0;
@@ -180,16 +158,6 @@ main {
     justify-content: center;
     align-items: center;
     z-index: 10;
-}
-
-/* Ensure video is hidden until after login */
-#video-background {
-    opacity: 0;
-    transition: opacity 1s ease;
-}
-
-#video-background.visible {
-    opacity: 1;
 }
 
 .login-window {
@@ -205,7 +173,7 @@ main {
     margin-top: 0;
     text-align: center;
     color: var(--text);
-    font-family: 'HeaderFont', sans-serif;
+    font-family: 'LoveLetter', sans-serif;
 }
 
 .input-group {
@@ -243,12 +211,10 @@ main {
     background: var(--visited);
 }
 
-/* Hide elements */
 .hidden {
     display: none !important;
 }
 
-/* Desktop Icons - now freely positioned */
 .desktop-icon {
     position: absolute;
     display: flex;
@@ -278,7 +244,6 @@ main {
     word-break: break-word;
 }
 
-/* Windows - updated size and style to match Windows XP "My Documents" */
 .window {
     position: absolute;
     background: var(--main-box);
@@ -323,7 +288,6 @@ main {
     overflow: auto;
 }
 
-/* Add styles for window content images */
 .window-content img {
     max-width: 100%;
     height: auto;
@@ -331,7 +295,6 @@ main {
     margin: 10px 0;
 }
 
-/* Add a toolbar below the header for Windows XP style */
 .window-toolbar {
     background: #f0f0f0;
     border-bottom: 1px solid #ccc;
@@ -354,7 +317,6 @@ main {
     background: rgba(0, 0, 0, 0.1);
 }
 
-/* Style for window links */
 .window-link {
     color: var(--unvisited);
     text-decoration: underline;
@@ -365,10 +327,9 @@ main {
     color: var(--visited);
 }
 
-/* Link colors */
-a:link {color: var(--unvisited);}
-a:visited {color: var(--visited);}
-/* Windows 98 Taskbar Styles */
+a:link { color: var(--unvisited); }
+a:visited { color: var(--visited); }
+
 #taskbar {
     position: fixed;
     bottom: 0;
@@ -444,7 +405,6 @@ a:visited {color: var(--visited);}
     border-top: 1px solid #ffffff;
 }
 
-/* Start Menu Styles */
 #start-menu {
     position: fixed;
     bottom: 30px;
@@ -500,10 +460,8 @@ a:visited {color: var(--visited);}
     border-bottom: 1px solid #ffffff;
 }
 
-/* ===== Layout fixes ===== */
 html, body { height: 100%; overflow: hidden; }
 
-/* Desktop stops exactly where the taskbar starts; border-box so padding can't push it off-screen */
 #desktop {
     position: fixed;
     inset: 0 0 30px 0;
@@ -518,7 +476,6 @@ html, body { height: 100%; overflow: hidden; }
 #windows-container { pointer-events: none; }
 #windows-container .window { pointer-events: auto; }
 
-/* ===== Taskbar / start menu (always readable, even in dark mode) ===== */
 #taskbar, #start-menu { color: #000; font-family: 'MS Sans Serif', Arial, sans-serif; font-size: 12px; box-sizing: border-box; }
 #taskbar { padding-bottom: env(safe-area-inset-bottom, 0px); height: calc(30px + env(safe-area-inset-bottom, 0px)); }
 #start-menu { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); }
@@ -538,7 +495,6 @@ html, body { height: 100%; overflow: hidden; }
 }
 #audio-control img { cursor: pointer; }
 
-/* ===== Windows ===== */
 .window {
     display: flex; flex-direction: column;
     overflow: hidden;
@@ -561,17 +517,13 @@ html, body { height: 100%; overflow: hidden; }
 }
 @media (max-width: 700px) { .window:not(.maximized) { left: 2vw !important; } }
 
-/* Shut down screen */
 #shutdown-screen { cursor: pointer; display: flex; justify-content: center; align-items: center; text-align: center; }
 #shutdown-screen.hidden { display: none !important; }
 
-
-/* ===== Navi-style login (positions are % of the 1920x1080 clip, sizes use cqw = % of stage width) ===== */
 #login-screen { background: #000; }
 #login-stage { position: relative; container-type: inline-size; width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; }
 #login-gif { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; }
 #login-freeze { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
-/* copy of empty background that hides the clip's own blinking square once you can type */
 #login-patch { position: absolute; left: 34.06%; top: 44.63%; width: 5.21%; height: 7.04%; visibility: hidden; }
 #login-typed {
     position: absolute; left: 34.6%; top: 45.4%; height: 6.2%;
@@ -585,7 +537,16 @@ html, body { height: 100%; overflow: hidden; }
     animation: login-blink 1s steps(1) infinite;
 }
 @keyframes login-blink { 50% { opacity: 0; } }
-/* the real input is invisible; it just receives the typing (and the phone keyboard) */
 #username { position: fixed; left: 0; top: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; font-size: 16px; }
 #login-gate { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: #bff; font-family: 'Courier New', monospace; letter-spacing: 0.25em; cursor: pointer; }
 #login-gate.hidden { display: none !important; }
+
+/* Custom Font Declaration for LoveLetter */
+@font-face {
+    font-display: swap;
+    font-family: 'LoveLetter';
+    font-style: normal;
+    font-weight: 400;
+    src: local("LoveLetter"),
+         url('./resources/fonts/LoveLetter.TTF') format('truetype');
+}
