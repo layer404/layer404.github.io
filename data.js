@@ -9,6 +9,32 @@ window.SITE_DATA = {
       "type": "text",
       "content": "<h2 class='underline'>About</h2><p>Hello and welcome to my little corner of the web! I'm a cybersecurity & cloud student with a passion for tinkering and exploring the inner workings of technology. Here, I'll be documenting my various topics I'm interested in and projects that are mostly related to cybersecurity stuff, networking or micro controllers. The site itself is a project even to HTML and CSS (because, why not?). My interests lie at the intersection of security and technology, I learn as I 'play' so I try myself at doing CTF challenges, or creating simple fun hacking tools. This site will be a reflection of my journey as I learn and experiment with new concepts and techniques to share with whoever might be interested. Thanks for stopping by, and I hope you find something interesting here!</p>"
     },
+  // Media Archive items
+  "mediaArchive": [
+    {
+      "title": "background.gif",
+      "type": "image",
+      "src": "./resources/images/background.gif",
+      "thumb": "./resources/images/background.gif"
+    },
+    {
+      "title": "welcome.wav",
+      "type": "audio",
+      "src": "./resources/sounds/welcome.wav"
+    },
+    {
+      "title": "startup.wav",
+      "type": "audio",
+      "src": "./resources/sounds/startup.wav"
+    },
+    {
+      "title": "icon.png",
+      "type": "image",
+      "src": "./resources/images/icon.png",
+      "thumb": "./resources/images/icon.png"
+    }
+  ]
+};
     {
       "title": "other_info.dat",
       "windowTitle": "Other Information",
