@@ -365,6 +365,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // ---------- Media Folder & File Viewers ----------
+    function openMediaFolder(title, items) {
+        let html = `<div class="media-folder-grid">`;
+        items.forEach((item, index) => {
+            let thumb = './resources/images/file.png';
+            if (item.type === 'image') {
+                thumb = item.thumb || item.src;
+            } else if (item.type === 'audio') {
+                thumb = './resources/images/sound.png';
+            }
+
+            html += `
+                <div class="folder-item" data-index="${index}" title="Double-click to open ${item.title}">
+                    <img src="${thumb}" alt="${item.title}">
+                    <span>${item.title}</span>
+                </div>
+            `;
+        });
+        html += `</div>`;
+
+        const win = createWindow(title, html);
+        const body = win.querySelector('.window-content div') || win.querySelector('.window-content');
+
+        body.querySelectorAll('.folder-item').forEach(el => {
+            el.addEventListener('dblclick', () => {
+                const item = items[el.dataset.index];
+                
+                if (item.type === 'image') {
+                    createWindow(item.title, `
+                        <div style="text-align: center; padding: 10px;">
+                            <img src="${item.src}" alt="${item.title}" style="max-width: 100%; max-height: 450px; border: 1px solid var(--accent);">
+                        </div>
+                    `);
+                } 
+                else if (item.type === 'audio') {
+                    createWindow(item.title, `
+                        <div style="text-align: center; padding: 30px;">
+                            <p style="margin-bottom: 15px; font-weight: bold;">Playing: ${item.title}</p>
+                            <audio controls autoplay src="${item.src}" style="width: 100%;"></audio>
+                        </div>
+                    `);
+                }
+            });
+        });
+    }
+
+    const folderStyle = document.createElement('style');
+    folderStyle.textContent = `
+        .media-folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+        .folder-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            user-select: none;
+        }
+        .folder-item:hover {
+            background: var(--icon-hover);
+            border: 1px dashed var(--accent);
+        }
+        .folder-item img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            margin-bottom: 6px;
+        }
+        .folder-item span {
+            font-size: 11px;
+            word-break: break-all;
+            color: var(--text);
+            line-height: 1.2;
+        }
+    `;
+    document.head.appendChild(folderStyle);
+
     // ---------- Window manager ----------
     let zTop = 10;
     let windowCounter = 0;
@@ -504,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function runStartAction(action) {
         switch (action) {
             case 'programs':  openDesktopFile('completed.exe'); break;
-            case 'documents': openDesktopFile('about_me.txt'); break;
+            case 'documents': openMediaFolder("Lain's Archive", siteData.mediaArchive || []); break;
             case 'find':      openDesktopFile('topics.txt'); break;
             case 'settings':
                 openWindow('Settings', '<h2 class="underline">Settings</h2><p>Nothing to configure yet. Use the speaker icon in the tray to mute the music.</p>');
