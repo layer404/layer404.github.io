@@ -1,8 +1,8 @@
 let youtubeIframe = null;
 let isMuted = false;
-let siteData = null; // Store fetched JSON data globally for start menu actions
+let siteData = null; // Store global site data for start menu actions
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
 
     // Get elements
     const bootSequence = document.getElementById('boot-sequence');
@@ -177,20 +177,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         Promise.race([preloadGif.decode().catch(() => {}), new Promise(r => setTimeout(r, 10000))]).then(begin);
     }
 
-    async function enterDesktop() {
+    function enterDesktop() {
         if (startupSound) startupSound.pause();
         loginScreen.classList.add('hidden');
         document.getElementById('desktop').classList.remove('hidden');
         initializeTaskbar();
         videoBackground.classList.add('visible');
 
-        // Fetch data.json and build desktop icons dynamically
-        try {
-            const res = await fetch('./data.json');
-            siteData = await res.json();
+        // Load data instantly from data.js global variable
+        if (window.SITE_DATA) {
+            siteData = window.SITE_DATA;
             buildDesktopIcons(siteData);
-        } catch (err) {
-            console.error("Failed to load data.json", err);
+        } else {
+            console.error("SITE_DATA not found. Make sure data.js is loaded before os.js.");
         }
 
         if (welcomeSound) {
@@ -285,7 +284,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             makeIconDraggable(iconDiv);
 
-            // Double click handler based on icon type
             iconDiv.addEventListener('dblclick', () => {
                 handleIconOpen(iconData);
             });
@@ -315,7 +313,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             createWindow(iconData.windowTitle, html);
         }
         else if (iconData.type === 'github_api') {
-            // Open window with immediate loading state and fetch live repos
             const win = createWindow(iconData.windowTitle, "<p>Connecting to GitHub API...</p>");
             const body = win.querySelector('.window-content div') || win.querySelector('.window-content');
             
