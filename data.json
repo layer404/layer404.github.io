@@ -1,4 +1,4 @@
-{
+window.SITE_DATA = {
   "icons": [
     {
       "title": "about_me.txt",
@@ -108,5 +108,29 @@
       "left": "20px",
       "type": "github_api"
     }
+  ],
+  "mediaArchive": [
+    {
+      "title": "background.gif",
+      "type": "image",
+      "src": "./resources/images/background.gif",
+      "thumb": "./resources/images/background.gif"
+    },
+    {
+      "title": "welcome.wav",
+      "type": "audio",
+      "src": "./resources/sounds/welcome.wav"
+    },
+    {
+      "title": "startup.wav",
+      "type": "audio",
+      "src": "./resources/sounds/startup.wav"
+    },
+    {
+      "title": "icon.png",
+      "type": "image",
+      "src": "./resources/images/icon.png",
+      "thumb": "./resources/images/icon.png"
+    }
   ]
-}
+};
